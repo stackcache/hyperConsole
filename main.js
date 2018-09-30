@@ -4,8 +4,9 @@ let SuperSecretNamespace = {};
 function whenAvailable(name, callback) {
   let interval = 10; // ms
   window.setTimeout(function() {
-    if (window[name]) {
-      return callback(window[name]);
+    const name = window[name];
+    if (name) {
+      return callback(name);
     }
     window.setTimeout(arguments.callee, interval);
   }, interval);
