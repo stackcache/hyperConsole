@@ -8,7 +8,7 @@ function whenAvailable(name, callback) {
     if (winName) {
       return callback(winName);
     }
-    window.setTimeout(arguments.callee, interval);
+    window.setTimeout(whenAvailable, interval);
   }, interval);
 }
 
