@@ -1,9 +1,12 @@
+/* global Vue */
 let SuperSecretNamespace = {};
 //SRC: https://stackoverflow.com/a/8618519
 function whenAvailable(name, callback) {
   let interval = 10; // ms
   window.setTimeout(function() {
-    if (window[name]) return callback(window[name]);
+    if (window[name]) {
+      return callback(window[name]);
+    }
     window.setTimeout(arguments.callee, interval);
   }, interval);
 }
@@ -53,8 +56,10 @@ SuperSecretNamespace.vm = new Vue({
       return results;
     },
     async getLibraries() {
-      if (!this.librariesFetchPromise)
+      if (!this.librariesFetchPromise) {
         this.librariesFetchPromise = this.fetchLibraries();
+      }
+
       return await this.librariesFetchPromise;
     },
     async loadLibraryByURL(url) {
@@ -107,8 +112,9 @@ SuperSecretNamespace.vm = new Vue({
       window.open(url);
     },
     open(type) {
-      if (type == 'github')
+      if (type == 'github') {
         window.open('https://github.com/stackcache/console');
+      }
     },
     refresh() {
       document.location.reload();
