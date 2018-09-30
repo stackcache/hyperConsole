@@ -112,7 +112,7 @@ SuperSecretNamespace.vm = new Vue({
       window.open(url);
     },
     open(type) {
-      if (type == 'github') {
+      if (type === 'github') {
         window.open('https://github.com/stackcache/console');
       }
     },
