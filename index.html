@@ -1,105 +1,102 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>console: devTools + steroids</title>
-    
-    <meta property="og:title" content="hyperConsole">
-    <meta property="og:site_name" content="hyperConsole">
-    <meta property="og:url" content="https://hyperconsole.itsarnavb.me">
-    <meta property="og:description" content="hyperConsole: devTools + steroids">
-    <meta property="og:type" content="article">
-    <meta property="og:image" content="">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
-    
-    <link rel="stylesheet" href="style.css" type="text/css" />
-    <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-     <!--Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109825707-10"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'UA-109825707-10', { 'anonymize_ip': true });
-    </script>
-  </head>
-  <body>
-    <div id="root">
-      <nav class="navbar navbar-light">
-        <div class="container-fluid d-flex" style="flex-wrap: nowrap;">
-          <input type="text" name="search" v-model="search" class="form-control" id="search" aria-describedby="librarySearch" placeholder="Search for libraries">
-          <button class="btn bmd-btn-fab bmd-btn-fab-sm ml-2" type="button" v-on:click="open('github')">
-            <i class="fab fa-github"></i>
-          </button>
-          <button class="btn bmd-btn-fab bmd-btn-fab-sm ml-2" type="button" v-on:click="open('twitter')">
-            <i class="fab fa-twitter"></i>
-          </button>
-        </div>
-      </nav>
-      <div class="container my-3" v-if="resultsMode">
-        <div class="row">
-          <div class="col-12 col-md-6">
-            <div class="list-group" v-if="results.length > 0">
-              <div class="card my-1">
-                <div class="card-body">
-                  Load libraries into the current page by clicking on them.
-                </div>
-              </div>
-              <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" v-for="result in results" v-on:click="loadLibrary(result)">
-                <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1">{{result.name}}</h5>
-                  <small>{{result.version}}</small>
-                </div>
-                <p class="mb-1 text-muted">{{result.description}}</p>
-              </a>
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div v-if="loadedLibraries.length > 0">
-              <div class="card">
-                <div class="card-body">
-                  <h3 class="card-title">Loaded Libraries</h3>
-                  <small>Access these in devTools.</small>
-                  <ul id="loadedLibraries" class="list-group list-group-flush">
-                    <li class="list-group-item" v-for="loadedLibrary in loadedLibraries">
-                      {{loadedLibrary.name}}
-                    </li>
-                  </ul>
-                  <button type="button" v-on:click="refresh" class="btn btn-primary">Clear libraries (refresh)</button>
-                </div>
-              </div>
-              <div class="card my-4">
-                <div class="card-body">
-                  <p class="card-text">
-                    <small>You can launch a blank page with these libraries preloaded. You might need to disable popup blockers.</small>
-                  </p>
-                  <button type="button" v-on:click="launchBlankPage(loadedLibraries)" class="btn btn-primary">Launch page with libraries</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>console: devTools + steroids</title>
+
+  <meta property="og:title" content="hyperConsole">
+  <meta property="og:site_name" content="hyperConsole">
+  <meta property="og:url" content="https://hyperconsole.itsarnavb.me">
+  <meta property="og:description" content="hyperConsole: devTools + steroids">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+    integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+</head>
+
+<body>
+  <div id="root">
+    <nav class="navbar navbar-light">
+      <div class="container-fluid d-flex" style="flex-wrap: nowrap;">
+        <input type="text" name="search" v-model="search" class="form-control" id="search" aria-describedby="librarySearch"
+          placeholder="Search for libraries">
+        <button class="btn bmd-btn-fab bmd-btn-fab-sm ml-2" type="button" v-on:click="open('github')">
+          <i class="fab fa-github"></i>
+        </button>
       </div>
-      <div class="container my-4" v-else>
-        <h1 style="font-family: 'Space Mono', monospace; font-weight: 100" class="my-2">hyperConsole</h1>
-        <div class="card my-4">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-              hyperConsole allows you to load libraries into the page, so you can experiment with them using devTools.
-            </li>
-            <li class="list-group-item">
-              As of now, libraries are loaded from&nbsp;<a href="https://cdnjs.com" target="_blank" class="m-0">cdnjs.com</a>.
-            </li>
-          </ul>
+    </nav>
+    <div class="container my-3" v-if="resultsMode">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="list-group" v-if="results.length > 0">
+            <div class="card my-1">
+              <div class="card-body">
+                Load libraries into the current page by clicking on them.
+              </div>
+            </div>
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" v-for="result in results"
+              v-on:click="loadLibrary(result)">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{result.name}}</h5>
+                <small>{{result.version}}</small>
+              </div>
+              <p class="mb-1 text-muted">{{result.description}}</p>
+            </a>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div v-if="loadedLibraries.length > 0">
+            <div class="card">
+              <div class="card-body">
+                <h3 class="card-title">Loaded Libraries</h3>
+                <small>Access these in devTools.</small>
+                <ul id="loadedLibraries" class="list-group list-group-flush">
+                  <li class="list-group-item" v-for="loadedLibrary in loadedLibraries">
+                    {{loadedLibrary.name}}
+                  </li>
+                </ul>
+                <button type="button" v-on:click="refresh" class="btn btn-primary">Clear libraries (refresh)</button>
+              </div>
+            </div>
+            <div class="card my-4">
+              <div class="card-body">
+                <p class="card-text">
+                  <small>You can launch a blank page with these libraries preloaded. You might need to disable popup
+                    blockers.</small>
+                </p>
+                <button type="button" v-on:click="launchBlankPage(loadedLibraries)" class="btn btn-primary">Launch page
+                  with libraries</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <script type="text/javascript" src="main.js"></script>
-  </body>
+    <div class="container my-4" v-else>
+      <h1 style="font-family: 'Space Mono', monospace; font-weight: 100" class="my-2">hyperConsole</h1>
+      <div class="card my-4">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            hyperConsole allows you to load libraries into the page, so you can experiment with them using devTools.
+          </li>
+          <li class="list-group-item">
+            As of now, libraries are loaded from&nbsp;<a href="https://cdnjs.com" target="_blank" class="m-0">cdnjs.com</a>.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="main.js"></script>
+</body>
+
 </html>

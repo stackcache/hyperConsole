@@ -2,4 +2,6 @@
 
 This tool lets you instantly inject JS libraries into the DOM, and you can try them out using the console.
 
-Try it here: https://hyperconsole.itsarnavb.me
+## Running it locally
+
+Open the included index.html file in a web browser...done!
